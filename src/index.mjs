@@ -54,10 +54,11 @@ twitch.on('join', (channel) => {
 twitch.on('part', (channel) => {
     if (channels.has(channel)) {
         try {
-            twitch.join(channel.slice(1))
+            await twitch.join(channel.slice(1))
         } catch (error) {
             
         }
+        return
     }
     channels.delete(channel)
     console.log(`[TMI.JS] Left ${channel.slice(1)}`)
