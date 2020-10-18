@@ -20,9 +20,15 @@ const commands = new Map()
  * VS Code wouldnt reconize this for some odd reason.
  */
 const twitch = new tmi.Client({
+    options: {
+        clientId: process.env.TWITCH_CLIENTID,
+        debug: false
+    },
     connection: {
+        cluster: "aws",
         secure: true,
         reconnect: true,
+        reconnectInterval: 2000,
     },
     identity: {
         username: process.env.TWITCH_USERNAME,
