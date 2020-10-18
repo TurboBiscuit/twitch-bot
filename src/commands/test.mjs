@@ -1,5 +1,6 @@
 export default {
     name:'test',
+    aliases:['pog'],
     run: async ({
         channel,
         command_name,
