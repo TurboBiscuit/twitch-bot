@@ -1,0 +1,20 @@
+export default {
+   name: '',
+    aliases:[''],
+    channels:[''],
+    sub:false,
+    mod:false,
+    streamer:false,
+    users:[''],
+    args: 0,
+    run: async ({
+        channel,
+        command_name,
+        args,
+        data,
+        message,
+        twitch
+    }) => {
+       
+    }
+}

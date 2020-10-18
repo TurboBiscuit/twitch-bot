@@ -57,11 +57,11 @@ twitch.on('join', (channel) => {
     console.log(`[TMI.JS] Joined ${channel.slice(1)}`)
 });
 
-twitch.on('part',async (channel) => {
+twitch.on('part', async (channel) => {
     if (channels.has(channel)) {
         try {
             await twitch.join(channel.slice(1))
-        } catch (error) {}
+        } catch (error) { }
         return
     }
     channels.delete(channel)
@@ -70,16 +70,19 @@ twitch.on('part',async (channel) => {
 
 // Command Loader
 var command_files = await fs.readdir(path.resolve('./src/commands'))
-await Promise.all(command_files.map(async command => {
+await Promise.all(command_files.filter(e=>e.endsWith('.mjs')||e.endsWith('.js')).map(async command => {
     var command_filename = `${command}`
     try {
         command = await import(path.resolve(`./src/commands/${command_filename}`))
         if (command.default) command = command.default
         if (!command.name) {
             console.log(`Command File "${command_filename}" has no name, using filename`)
-            command.name = command_filenam.split('.')[0]
+            command.name = command_filename.split('.')[0]
         }
         if (!command.run) return console.log(`Command File "${command_filename}" has no run function!`)
+        if (command.channels) {
+            if (!Array.isArray(command.channels)) command.channels = [command.channels]
+        }
         commands.set(command.name, command)
     } catch (error) {
         console.log(`[TMI.JS] Error Loading Command "${command_filename}".\n${error.stack}`)
@@ -89,14 +92,17 @@ await Promise.all(command_files.map(async command => {
 // Command Handler
 twitch.on('message', async (channel, data, message, self) => {
     if (self) return;
+    if(data['message-type']!=='chat') return
     if (!channels.has(channel)) return twitch.part(channel.slice(1))
     var channel = channel.slice(1)
     const prefix = process.env.BOT_PREFIX || '!'
+    if (!message.startsWith(prefix)) return;
     const split = message.slice(prefix.length).split(' ')
     const command_name = split[0].toLowerCase()
     const args = split.slice(1, split.length - 1)
     const command = commands.get(command_name) || [...commands].map(e => e[1]).find(e => (e.aliases ? e.aliases : []).indexOf(command_name) != -1)
     if (!command) return
+    if (command.channels && command.channels.indexOf(channel)==-1) return
     if (command.users) {
         if (!command.users.includes(data["user-id"])) return twitch.say(channel, 'You are not authorized to use this command!')
     }
