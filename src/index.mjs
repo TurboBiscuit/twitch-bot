@@ -51,7 +51,7 @@ twitch.on('join', (channel) => {
     console.log(`[TMI.JS] Joined ${channel.slice(1)}`)
 });
 
-twitch.on('part', (channel) => {
+twitch.on('part',async (channel) => {
     if (channels.has(channel)) {
         try {
             await twitch.join(channel.slice(1))
