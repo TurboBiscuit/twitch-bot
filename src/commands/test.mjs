@@ -1,5 +1,5 @@
 export default {
-    name:'help',
+    name:'test',
     run: async ({
         channel,
         command_name,
@@ -8,6 +8,6 @@ export default {
         message,
         twitch
     }) =>{
-        twitch.say(channel,'https://bot.smlchief.cf')
+        twitch.say(channel,'pog')
     }
 }
