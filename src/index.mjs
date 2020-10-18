@@ -55,9 +55,7 @@ twitch.on('part', (channel) => {
     if (channels.has(channel)) {
         try {
             await twitch.join(channel.slice(1))
-        } catch (error) {
-            
-        }
+        } catch (error) {}
         return
     }
     channels.delete(channel)
